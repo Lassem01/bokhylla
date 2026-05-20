@@ -38,22 +38,7 @@ Den viser skjema, liste og knapper, og sender forespørsler til API-et i bakgrun
 
 API-endepunkter
 MetodeURLHva den gjørGET/booksHenter alle bøkerGET/books/status/{status}Henter bøker med en bestemt statusPOST/booksLegger til en ny bokPUT/books/{id}Oppdaterer en eksisterende bokDELETE/books/{id}Sletter en bok
-Mappestruktur
-bokhylla/
-├── src/
-│   └── main/
-│       ├── java/com/lasse/bokhylla/
-│       │   ├── BokhyllaApplication.java   (starter appen)
-│       │   ├── Book.java                  (bokmodellen / databasetabellen)
-│       │   ├── ReadingStatus.java         (de fire statusene)
-│       │   ├── BookRepository.java        (snakker med databasen)
-│       │   └── BookController.java         (REST-API-et)
-│       └── resources/
-│           ├── static/
-│           │   └── index.html             (nettsiden / grensesnittet)
-│           └── application.properties     (konfigurasjon)
-├── data/                                  (databasefilen – lages automatisk)
-└── build.gradle                           (avhengigheter og byggeoppsett)
+
 Database
 Bøkene lagres i en H2-database som skrives til fil under data/-mappa, slik at de overlever når appen startes på nytt.
 Du kan inspisere databasen direkte mens appen kjører ved å åpne http://localhost:8080/h2-console (JDBC URL: jdbc:h2:file:./data/bokhylla, brukernavn: sa).
