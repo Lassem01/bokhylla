@@ -12,15 +12,15 @@
             --paper: #f4ede0;
             --ink: #2b2620;
             --ink-soft: #6b6254;
-            --accent: #8a3324;       /* dyp rødbrun, som bokrygg */
+            --accent: #8a3324;
             --accent-dark: #6e2519;
             --gold: #b08442;
             --line: #d8cdb8;
             --card: #fbf7ee;
-            --read: #4a6c4f;         /* grønn */
-            --reading: #c08a2d;      /* gyllen */
-            --want: #4a6c8a;         /* blå */
-            --wishlist: #8a4a6c;     /* lilla-rosa */
+            --read: #4a6c4f;
+            --reading: #c08a2d;
+            --want: #4a6c8a;
+            --wishlist: #8a4a6c;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +34,7 @@
             color: var(--ink);
             min-height: 100vh;
             line-height: 1.6;
-            padding: 0 0 60px;
+            padding: 0 0 80px;
         }
 
         header {
@@ -66,27 +66,39 @@
         }
 
         .wrap {
-            max-width: 920px;
+            max-width: 980px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
-        /* ---- skjema ---- */
-        .add-card {
+        /* ---- topp-rad: skjema + søk/filter side ved side ---- */
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+            align-items: start;
+        }
+
+        .panel {
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 4px;
-            padding: 28px;
-            margin-top: 40px;
+            padding: 26px;
             box-shadow: 0 10px 30px -18px rgba(43,38,32,0.5);
         }
-        .add-card h2 {
+        .panel.editing {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(176,132,66,0.18), 0 10px 30px -18px rgba(43,38,32,0.5);
+        }
+        .panel h2 {
             font-family: 'Fraunces', serif;
             font-weight: 600;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 18px;
             color: var(--accent);
         }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -111,6 +123,7 @@
             background: #fffdf8;
             color: var(--ink);
             transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
         }
         input:focus, select:focus {
             outline: none;
@@ -123,141 +136,159 @@
             border: none;
             transition: transform 0.12s, background 0.2s;
         }
+        .form-actions { display: flex; gap: 12px; margin-top: 20px; align-items: center; }
         .btn-add {
-            margin-top: 20px;
             background: var(--accent);
             color: #f8f1e4;
             font-size: 1.05rem;
             font-weight: 600;
             padding: 12px 28px;
             border-radius: 3px;
-            letter-spacing: 0.01em;
         }
         .btn-add:hover { background: var(--accent-dark); }
         .btn-add:active { transform: translateY(1px); }
-
-        /* ---- filtre ---- */
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 44px 0 20px;
-            align-items: center;
-        }
-        .filters .flabel {
-            font-family: 'Fraunces', serif;
-            font-weight: 600;
-            font-size: 1.3rem;
-            margin-right: 8px;
-        }
-        .chip {
-            font-family: 'Spectral', serif;
+        .btn-cancel {
             background: transparent;
-            border: 1px solid var(--line);
             color: var(--ink-soft);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            padding: 12px 18px;
+            border-radius: 3px;
+            border: 1px solid var(--line);
+            display: none;
         }
-        .chip:hover { border-color: var(--accent); color: var(--accent); }
-        .chip.active {
-            background: var(--ink);
-            color: var(--paper);
-            border-color: var(--ink);
+        .btn-cancel:hover { border-color: var(--accent); color: var(--accent); }
+        .panel.editing .btn-cancel { display: inline-block; }
+
+        /* ---- søke/filter-panel ---- */
+        .search-box { position: relative; margin-bottom: 18px; }
+        .search-box input { padding-left: 36px; }
+        .search-box::before {
+            content: "⌕";
+            position: absolute;
+            left: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--ink-soft);
+            font-size: 1.2rem;
+            pointer-events: none;
         }
 
-        /* ---- bokliste ---- */
-        .book-list { display: flex; flex-direction: column; gap: 14px; }
-        .book {
+        .filter-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+        .check {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 10px;
+            padding: 7px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.15s;
+        }
+        .check:hover { background: rgba(138,51,36,0.06); }
+        .check input { width: auto; cursor: pointer; accent-color: var(--accent); width: 17px; height: 17px; }
+        .check .dot {
+            width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+        }
+        .check .dot.READ { background: var(--read); }
+        .check .dot.READING { background: var(--reading); }
+        .check .dot.WANT_TO_READ { background: var(--want); }
+        .check .dot.WISHLIST { background: var(--wishlist); }
+        .check .lbl { flex: 1; }
+        .check .cnt { color: var(--ink-soft); font-size: 0.85rem; }
+
+        .sort-box select { font-size: 0.95rem; }
+        .sort-label {
+            font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--ink-soft); margin-bottom: 6px; display: block;
+            font-family: 'Spectral', serif;
+        }
+
+        /* ---- seksjoner ---- */
+        .section { margin-top: 30px; }
+        .section-head {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 14px; padding-bottom: 8px;
+            border-bottom: 1px solid var(--line);
+        }
+        .section-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .section-dot.READ { background: var(--read); }
+        .section-dot.READING { background: var(--reading); }
+        .section-dot.WANT_TO_READ { background: var(--want); }
+        .section-dot.WISHLIST { background: var(--wishlist); }
+        .section-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.35rem; }
+        .section-count { font-family: 'Spectral', serif; font-size: 0.9rem; color: var(--ink-soft); margin-left: auto; }
+
+        .books-heading {
+            font-family: 'Fraunces', serif; font-weight: 600;
+            font-size: 1.7rem; margin: 50px 0 4px;
+        }
+
+        .book-list { display: flex; flex-direction: column; gap: 12px; }
+        .book {
+            display: flex; align-items: center; gap: 14px;
             background: var(--card);
             border: 1px solid var(--line);
             border-left: 5px solid var(--line);
             border-radius: 4px;
-            padding: 18px 20px;
-            animation: rise 0.4s ease both;
+            padding: 16px 20px;
+            animation: rise 0.35s ease both;
         }
         @keyframes rise {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .book-main { flex: 1; min-width: 0; }
-        .book-title {
-            font-family: 'Fraunces', serif;
-            font-weight: 600;
-            font-size: 1.25rem;
-            color: var(--ink);
-        }
-        .book-meta {
-            color: var(--ink-soft);
-            font-size: 0.95rem;
-            font-style: italic;
-        }
-        .badge {
-            font-family: 'Spectral', serif;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.07em;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: #fff;
-            white-space: nowrap;
-            font-weight: 500;
-        }
-        .badge.READ { background: var(--read); }
-        .badge.READING { background: var(--reading); }
-        .badge.WANT_TO_READ { background: var(--want); }
-        .badge.WISHLIST { background: var(--wishlist); }
+        .book-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.2rem; color: var(--ink); }
+        .book-meta { color: var(--ink-soft); font-size: 0.95rem; font-style: italic; }
         .book[data-status="READ"] { border-left-color: var(--read); }
         .book[data-status="READING"] { border-left-color: var(--reading); }
         .book[data-status="WANT_TO_READ"] { border-left-color: var(--want); }
         .book[data-status="WISHLIST"] { border-left-color: var(--wishlist); }
 
-        .btn-del {
-            background: transparent;
-            color: var(--ink-soft);
+        .book-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .icon-btn {
+            background: transparent; color: var(--ink-soft);
             border: 1px solid var(--line);
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            line-height: 1;
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
+            width: 34px; height: 34px; border-radius: 50%;
+            font-size: 1rem; line-height: 1;
+            display: grid; place-items: center;
         }
+        .btn-edit:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
         .btn-del:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
         .empty {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--ink-soft);
-            font-style: italic;
-            font-size: 1.1rem;
+            text-align: center; padding: 50px 20px;
+            color: var(--ink-soft); font-style: italic; font-size: 1.1rem;
         }
 
-        .count {
-            font-family: 'Spectral', serif;
-            font-size: 0.9rem;
-            color: var(--ink-soft);
-            margin-left: auto;
-        }
-
+        /* ---- toast (fikset slik at den ikke blir kuttet) ---- */
         .toast {
             position: fixed;
-            bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120%);
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
             background: var(--ink);
             color: var(--paper);
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 13px 26px;
+            border-radius: 6px;
             font-size: 0.95rem;
-            transition: transform 0.3s ease;
-            z-index: 50;
+            font-family: 'Spectral', serif;
+            box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            white-space: nowrap;
+            max-width: calc(100vw - 40px);
+            text-align: center;
         }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-4px);
+        }
 
-        @media (max-width: 560px) {
+        @media (max-width: 720px) {
+            .top-grid { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -269,97 +300,198 @@
 </header>
 
 <div class="wrap">
-    <!-- Skjema for å legge til bok -->
-    <div class="add-card">
-        <h2>Legg til en bok</h2>
-        <div class="form-grid">
-            <div class="field full">
-                <label for="title">Tittel</label>
-                <input type="text" id="title" placeholder="f.eks. Sofies verden">
+    <div class="top-grid">
+        <!-- Venstre: skjema -->
+        <div class="panel" id="formCard">
+            <h2 id="formTitle">Legg til en bok</h2>
+            <div class="form-grid">
+                <div class="field full">
+                    <label for="title">Tittel</label>
+                    <input type="text" id="title" placeholder="f.eks. Sofies verden">
+                </div>
+                <div class="field">
+                    <label for="author">Forfatter</label>
+                    <input type="text" id="author" placeholder="f.eks. Jostein Gaarder">
+                </div>
+                <div class="field">
+                    <label for="pages">Antall sider</label>
+                    <input type="number" id="pages" placeholder="518" min="0">
+                </div>
+                <div class="field full">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="READ">Lest</option>
+                        <option value="READING">Leser nå</option>
+                        <option value="WANT_TO_READ">I hyllen, ulest</option>
+                        <option value="WISHLIST">Ønskeliste</option>
+                    </select>
+                </div>
             </div>
-            <div class="field">
-                <label for="author">Forfatter</label>
-                <input type="text" id="author" placeholder="f.eks. Jostein Gaarder">
+            <div class="form-actions">
+                <button class="btn-add" id="submitBtn" onclick="submitForm()">Sett i hyllen</button>
+                <button class="btn-cancel" onclick="cancelEdit()">Avbryt</button>
             </div>
-            <div class="field">
-                <label for="pages">Antall sider</label>
-                <input type="number" id="pages" placeholder="518" min="0">
+        </div>
+
+        <!-- Høyre: søk + filter -->
+        <div class="panel">
+            <h2>Søk og filtrer</h2>
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Søk tittel eller forfatter..." oninput="render()">
             </div>
-            <div class="field full">
-                <label for="status">Status</label>
-                <select id="status">
-                    <option value="READ">Lest</option>
-                    <option value="READING">Leser nå</option>
-                    <option value="WANT_TO_READ">Vil lese</option>
-                    <option value="WISHLIST">Ønskeliste</option>
+
+            <div class="filter-group" id="filterGroup">
+                <label class="check">
+                    <input type="checkbox" class="status-filter" value="READING" checked onchange="render()">
+                    <span class="dot READING"></span>
+                    <span class="lbl">Leser nå</span>
+                    <span class="cnt" data-count="READING"></span>
+                </label>
+                <label class="check">
+                    <input type="checkbox" class="status-filter" value="WANT_TO_READ" checked onchange="render()">
+                    <span class="dot WANT_TO_READ"></span>
+                    <span class="lbl">I hyllen, ulest</span>
+                    <span class="cnt" data-count="WANT_TO_READ"></span>
+                </label>
+                <label class="check">
+                    <input type="checkbox" class="status-filter" value="READ" checked onchange="render()">
+                    <span class="dot READ"></span>
+                    <span class="lbl">Lest</span>
+                    <span class="cnt" data-count="READ"></span>
+                </label>
+                <label class="check">
+                    <input type="checkbox" class="status-filter" value="WISHLIST" checked onchange="render()">
+                    <span class="dot WISHLIST"></span>
+                    <span class="lbl">Ønskeliste</span>
+                    <span class="cnt" data-count="WISHLIST"></span>
+                </label>
+            </div>
+
+            <div class="sort-box">
+                <span class="sort-label">Sortering</span>
+                <select id="sort" onchange="render()">
+                    <option value="title">Tittel (A–Å)</option>
+                    <option value="author">Forfatter (A–Å)</option>
+                    <option value="pages-desc">Flest sider</option>
+                    <option value="pages-asc">Færrest sider</option>
                 </select>
             </div>
         </div>
-        <button class="btn-add" onclick="addBook()">Sett i hylla</button>
     </div>
 
-    <!-- Filtre -->
-    <div class="filters">
-        <span class="flabel">Hyllen min</span>
-        <button class="chip active" data-filter="ALL" onclick="setFilter('ALL', this)">Alle</button>
-        <button class="chip" data-filter="READ" onclick="setFilter('READ', this)">Lest</button>
-        <button class="chip" data-filter="READING" onclick="setFilter('READING', this)">Leser nå</button>
-        <button class="chip" data-filter="WANT_TO_READ" onclick="setFilter('WANT_TO_READ', this)">Vil lese</button>
-        <button class="chip" data-filter="WISHLIST" onclick="setFilter('WISHLIST', this)">Ønskeliste</button>
-        <span class="count" id="count"></span>
-    </div>
-
-    <!-- Bokliste -->
-    <div class="book-list" id="bookList"></div>
+    <h2 class="books-heading">Hyllen min</h2>
+    <div id="sections"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
     const API = '/books';
-    let currentFilter = 'ALL';
+    let editingId = null;
+    let allBooks = [];
 
     const STATUS_LABELS = {
         READ: 'Lest',
         READING: 'Leser nå',
-        WANT_TO_READ: 'Vil lese',
+        WANT_TO_READ: 'I hyllen, ulest',
         WISHLIST: 'Ønskeliste'
     };
+    const STATUS_ORDER = ['READING', 'WANT_TO_READ', 'READ', 'WISHLIST'];
 
-    // Hent og vis bøker når siden lastes
     document.addEventListener('DOMContentLoaded', loadBooks);
 
+    let toastTimer = null;
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
         t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2200);
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
     }
 
-    // Henter bøker fra API-et. Bruker /books/status/X hvis et filter er valgt.
     async function loadBooks() {
         try {
-            const url = currentFilter === 'ALL' ? API : `${API}/status/${currentFilter}`;
-            const res = await fetch(url);
+            const res = await fetch(API);
             if (!res.ok) throw new Error('Kunne ikke hente bøker');
-            const books = await res.json();
-            renderBooks(books);
+            allBooks = await res.json();
+            render();
         } catch (err) {
             showToast('Feil ved henting: ' + err.message);
         }
     }
 
-    function renderBooks(books) {
-        const list = document.getElementById('bookList');
-        const count = document.getElementById('count');
-        count.textContent = books.length === 1 ? '1 bok' : `${books.length} bøker`;
+    // Hvilke statuser er huket av akkurat nå?
+    function activeStatuses() {
+        return Array.from(document.querySelectorAll('.status-filter:checked')).map(c => c.value);
+    }
 
+    function render() {
+        const term = document.getElementById('search').value.trim().toLowerCase();
+        const sortBy = document.getElementById('sort').value;
+        const chosen = activeStatuses();
+        const container = document.getElementById('sections');
+
+        // Oppdater antall pr. status (vises ved hver avhukingsboks)
+        STATUS_ORDER.forEach(s => {
+            const el = document.querySelector(`[data-count="${s}"]`);
+            if (el) {
+                const n = allBooks.filter(b => b.status === s).length;
+                el.textContent = n ? `(${n})` : '';
+            }
+        });
+
+        // Filtrer: søkeord OG valgte statuser
+        let books = allBooks.filter(b => {
+            const t = (b.title || '').toLowerCase();
+            const a = (b.author || '').toLowerCase();
+            const matchesTerm = t.includes(term) || a.includes(term);
+            const matchesStatus = chosen.includes(b.status);
+            return matchesTerm && matchesStatus;
+        });
+
+        // Sorter
+        books.sort((x, y) => {
+            switch (sortBy) {
+                case 'author': return (x.author || '').localeCompare(y.author || '', 'no');
+                case 'pages-desc': return (y.pages || 0) - (x.pages || 0);
+                case 'pages-asc': return (x.pages || 0) - (y.pages || 0);
+                default: return (x.title || '').localeCompare(y.title || '', 'no');
+            }
+        });
+
+        if (chosen.length === 0) {
+            container.innerHTML = '<div class="empty">Huk av minst én kategori til venstre for å se bøker.</div>';
+            return;
+        }
         if (books.length === 0) {
-            list.innerHTML = '<div class="empty">Ingen bøker her ennå. Legg til din første over!</div>';
+            container.innerHTML = term
+                ? `<div class="empty">Ingen treff på «${escapeHtml(term)}».</div>`
+                : '<div class="empty">Ingen bøker i de valgte kategoriene ennå.</div>';
             return;
         }
 
-        list.innerHTML = books.map(b => `
+        // Grupper i seksjoner (kun de valgte statusene, i fast rekkefølge)
+        let html = '';
+        STATUS_ORDER.forEach(status => {
+            if (!chosen.includes(status)) return;
+            const inSection = books.filter(b => b.status === status);
+            if (inSection.length === 0) return;
+            html += `
+        <div class="section">
+          <div class="section-head">
+            <span class="section-dot ${status}"></span>
+            <span class="section-title">${STATUS_LABELS[status]}</span>
+            <span class="section-count">${inSection.length === 1 ? '1 bok' : inSection.length + ' bøker'}</span>
+          </div>
+          <div class="book-list">${inSection.map(bookRow).join('')}</div>
+        </div>
+      `;
+        });
+        container.innerHTML = html;
+    }
+
+    function bookRow(b) {
+        return `
       <div class="book" data-status="${b.status}">
         <div class="book-main">
           <div class="book-title">${escapeHtml(b.title)}</div>
@@ -367,23 +499,21 @@
             ${b.author ? escapeHtml(b.author) : 'Ukjent forfatter'}${b.pages ? ' &middot; ' + b.pages + ' sider' : ''}
           </div>
         </div>
-        <span class="badge ${b.status}">${STATUS_LABELS[b.status] || b.status}</span>
-        <button class="btn-del" onclick="deleteBook(${b.id})" title="Slett">&times;</button>
+        <div class="book-actions">
+          <button class="icon-btn btn-edit" onclick='startEdit(${JSON.stringify(b)})' title="Rediger">&#9998;</button>
+          <button class="icon-btn btn-del" onclick="deleteBook(${b.id})" title="Slett">&times;</button>
+        </div>
       </div>
-    `).join('');
+    `;
     }
 
-    // Sender ny bok til API-et med POST
-    async function addBook() {
+    async function submitForm() {
         const title = document.getElementById('title').value.trim();
         const author = document.getElementById('author').value.trim();
         const pages = document.getElementById('pages').value;
         const status = document.getElementById('status').value;
 
-        if (!title) {
-            showToast('Tittel kan ikke være tom');
-            return;
-        }
+        if (!title) { showToast('Tittel kan ikke være tom'); return; }
 
         const book = {
             title: title,
@@ -393,53 +523,74 @@
         };
 
         try {
-            const res = await fetch(API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(book)
-            });
+            let res;
+            if (editingId !== null) {
+                res = await fetch(`${API}/${editingId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(book)
+                });
+            } else {
+                res = await fetch(API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(book)
+                });
+            }
             if (!res.ok) throw new Error('Kunne ikke lagre boka');
-
-            // Tøm skjemaet
-            document.getElementById('title').value = '';
-            document.getElementById('author').value = '';
-            document.getElementById('pages').value = '';
-            showToast('Boka er satt i hylla!');
+            showToast(editingId !== null ? 'Endringene er lagret!' : 'Boka er satt i hyllen!');
+            resetForm();
             loadBooks();
         } catch (err) {
             showToast('Feil: ' + err.message);
         }
     }
 
-    // Sletter en bok med DELETE
+    function startEdit(book) {
+        editingId = book.id;
+        document.getElementById('title').value = book.title || '';
+        document.getElementById('author').value = book.author || '';
+        document.getElementById('pages').value = book.pages || '';
+        document.getElementById('status').value = book.status;
+        document.getElementById('formTitle').textContent = 'Rediger bok';
+        document.getElementById('submitBtn').textContent = 'Lagre endringer';
+        document.getElementById('formCard').classList.add('editing');
+        document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function cancelEdit() { resetForm(); }
+
+    function resetForm() {
+        editingId = null;
+        document.getElementById('title').value = '';
+        document.getElementById('author').value = '';
+        document.getElementById('pages').value = '';
+        document.getElementById('status').value = 'READ';
+        document.getElementById('formTitle').textContent = 'Legg til en bok';
+        document.getElementById('submitBtn').textContent = 'Sett i hyllen';
+        document.getElementById('formCard').classList.remove('editing');
+    }
+
     async function deleteBook(id) {
         try {
             const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Kunne ikke slette');
             showToast('Boka er fjernet');
+            if (editingId === id) resetForm();
             loadBooks();
         } catch (err) {
             showToast('Feil: ' + err.message);
         }
     }
 
-    function setFilter(filter, btn) {
-        currentFilter = filter;
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        loadBooks();
-    }
-
-    // Enkel beskyttelse mot at spesialtegn i titler ødelegger HTML-en
     function escapeHtml(str) {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     }
 
-    // Lar deg trykke Enter i tittelfeltet for å legge til
     document.getElementById('title').addEventListener('keydown', e => {
-        if (e.key === 'Enter') addBook();
+        if (e.key === 'Enter') submitForm();
     });
 </script>
 </body>
