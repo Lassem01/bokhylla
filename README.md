@@ -22,9 +22,9 @@ Gradle: byggeverktøy
 
 Slik kjører du prosjektet
 
-Sørg for at du har Java 21 installert (java -version for å sjekke).
+Sørg for at du har Java 21 installert.
 Åpne prosjektet i IntelliJ IDEA.
-Kjør BokhyllaApplication (den grønne pilen ved main-metoden).
+Kjør BokhyllaApplication.
 Når du ser Started BokhyllaApplication i konsollen, er appen i gang.
 Åpne nettleseren på http://localhost:8080
 
