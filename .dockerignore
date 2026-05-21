@@ -1,0 +1,18 @@
+# Hold Docker-bygget rent og raskt ved å utelate filer som ikke trengs.
+
+# Bygde filer (bygges på nytt inne i containeren)
+build/
+.gradle/
+
+# Databasefiler – skal ikke bakes inn i image-et
+data/
+
+# IDE-filer
+.idea/
+*.iml
+
+# Diverse
+.git/
+.gitignore
+README.md
+*.md

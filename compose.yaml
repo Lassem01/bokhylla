@@ -1,0 +1,23 @@
+# Docker Compose-fil for bokhylla.
+# Kjør hele appen med:  docker compose up
+# Stopp den med:        docker compose down
+
+services:
+  bokhylla:
+    # Bygg image-et ut fra Dockerfile i denne mappa
+    build: .
+    container_name: bokhylla
+    ports:
+      # Koble port 8080 på maskinen din til port 8080 i containeren,
+      # slik at du når appen på http://localhost:8080
+      - "8080:8080"
+    volumes:
+      # Koble ./data på maskinen din til /app/data i containeren.
+      # Dette gjør at databasefila (og dermed bøkene dine) overlever
+      # selv om containeren stoppes eller bygges på nytt.
+      - ./data:/app/data
+    environment:
+      # Sørg for at databasen lagres på den utkoblede stien over.
+      # Dette overstyrer datasource-url-en når appen kjører i Docker.
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/bokhylla
+    restart: unless-stopped
